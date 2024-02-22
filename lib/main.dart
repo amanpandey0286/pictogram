@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:pictogram/layouts/mobile_layout.dart';
 import 'package:pictogram/layouts/web_layout.dart';
 import 'package:pictogram/screens/login_screen.dart';
+import 'package:pictogram/screens/register_screen.dart';
 import 'package:pictogram/utils/my_colors.dart';
 import 'package:pictogram/layouts/responsive_layout.dart';
+import 'package:pictogram/utils/routes.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,9 +17,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Pictogram',
-        theme: ThemeData.dark()
-            .copyWith(scaffoldBackgroundColor: kMobileBackgroundColor),
-        home: LoginScreen());
+      title: 'Pictogram',
+      theme: ThemeData.dark()
+          .copyWith(scaffoldBackgroundColor: kMobileBackgroundColor),
+      initialRoute: MyRoutes.registerRoute,
+      routes: {
+        MyRoutes.loginRoute: (context) => LoginScreen(),
+        MyRoutes.registerRoute: (context) => RegisterScreen(),
+      },
+    );
   }
 }
