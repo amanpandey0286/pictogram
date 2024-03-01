@@ -1,6 +1,11 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:pictogram/Widgets/reusable_text_widget.dart';
+import 'package:pictogram/screens/home_screen.dart';
+import 'package:pictogram/screens/login_screen.dart';
 import 'package:pictogram/services/auth_methods.dart';
+import 'package:pictogram/utils/utility.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -14,6 +19,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   late final TextEditingController _email;
   late final TextEditingController _password;
   late final TextEditingController _bio;
+  Uint8List? _image;
+  bool _loading = false;
 
   @override
   void initState() {
@@ -31,6 +38,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _password.dispose();
     _bio.dispose();
     super.dispose();
+  }
+
+  void _navigateToLogin() {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        (route) => false);
+  }
+
+  void _toRegister() async {
+    setState(() {
+      _loading = true;
+    });
+
+    final res = await AuthMethods().registerUser(
+        email: _email.text,
+        password: _password.text,
+        name: _name.text,
+        bio: _bio.text,
+        file: _image!);
+    if (res == 'Success') {
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          (route) => false);
+    } else {
+      showSnackBar(context, res.toString());
+    }
+    setState(() {
+      _loading = false;
+    });
+  }
+
+  _selectImage() async {
+    Uint8List im = await pickImage(ImageSource.gallery);
+    setState(() {
+      _image = im;
+    });
   }
 
   @override
@@ -59,9 +104,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
               width: 120,
               child: Stack(
                 children: [
-                  const CircleAvatar(
-                    minRadius: 60.0,
-                  ),
+                  _image != null
+                      ? CircleAvatar(
+                          backgroundImage: MemoryImage(_image!),
+                          radius: 60.0,
+                        )
+                      : const CircleAvatar(
+                          radius: 60.0,
+                          child: Icon(
+                            Icons.person,
+                            size: 80.0,
+                          ),
+                        ),
                   Positioned(
                     bottom: 0.0,
                     right: 0.0,
@@ -72,7 +126,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           shape: BoxShape.circle, color: Colors.blueAccent),
                       child: IconButton(
                         iconSize: 20,
-                        onPressed: () {},
+                        onPressed: _selectImage,
                         icon: const Icon(Icons.add_a_photo_rounded),
                       ),
                     ),
@@ -115,7 +169,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
             const SizedBox(
               height: 24.0,
             ),
-            ElevatedButton(onPressed: () {}, child: const Text('Register')),
+            ElevatedButton(
+              onPressed: _toRegister,
+              child: _loading == true
+                  ? CircularProgressIndicator()
+                  : const Text('Register'),
+            ),
             Flexible(
               flex: 2,
               child: Container(),
@@ -125,13 +184,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               children: [
                 const Text('Already a user?'),
                 TextButton(
-                    onPressed: () {
-                      AuthMethods().registerUser(
-                          email: _email.text,
-                          password: _password.text,
-                          name: _name.text,
-                          bio: _bio.text);
-                    },
+                    onPressed: _navigateToLogin,
                     child: const Text(
                       'Login',
                       style: TextStyle(fontWeight: FontWeight.bold),

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pictogram/Widgets/reusable_text_widget.dart';
+import 'package:pictogram/screens/home_screen.dart';
+import 'package:pictogram/screens/register_screen.dart';
+import 'package:pictogram/services/auth_methods.dart';
+import 'package:pictogram/utils/utility.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,6 +15,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   late final TextEditingController _email;
   late final TextEditingController _password;
+  bool _loading = false;
 
   @override
   void initState() {
@@ -24,6 +29,33 @@ class _LoginScreenState extends State<LoginScreen> {
     _email.dispose();
     _password.dispose();
     super.dispose();
+  }
+
+  void _navigateToRegister() {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const RegisterScreen()),
+        (route) => false);
+  }
+
+  void _toLogin() async {
+    setState(() {
+      _loading = true;
+    });
+
+    final res = await AuthMethods()
+        .loginUser(email: _email.text, password: _password.text);
+    if (res == 'Success') {
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          (route) => false);
+    } else {
+      showSnackBar(context, res.toString());
+    }
+    setState(() {
+      _loading = false;
+    });
   }
 
   @override
@@ -81,7 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   Text("Don't have an account?"),
                   TextButton(
-                      onPressed: () {},
+                      onPressed: _navigateToRegister,
                       child: Text(
                         'Register',
                         style: TextStyle(fontWeight: FontWeight.bold),
