@@ -62,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Login Screen',
         ),
       ),
@@ -73,14 +73,14 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Flexible(
-                child: Container(),
                 flex: 2,
+                child: Container(),
               ),
-              Text(
+              const Text(
                 'Pictogram',
                 style: TextStyle(fontSize: 40.0),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 120.0,
               ),
               ReusableTextWidget(
@@ -89,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 isPass: false,
                 keyType: TextInputType.emailAddress,
               ),
-              SizedBox(
+              const SizedBox(
                 height: 24.0,
               ),
               ReusableTextWidget(
@@ -97,24 +97,24 @@ class _LoginScreenState extends State<LoginScreen> {
                   textController: _password,
                   isPass: true,
                   keyType: TextInputType.text),
-              SizedBox(
+              const SizedBox(
                 height: 24.0,
               ),
               ElevatedButton(
                 onPressed: () {},
-                child: Text('Login'),
+                child: const Text('Login'),
               ),
               Flexible(
-                child: Container(),
                 flex: 2,
+                child: Container(),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Don't have an account?"),
+                  const Text("Don't have an account?"),
                   TextButton(
                       onPressed: _navigateToRegister,
-                      child: Text(
+                      child: const Text(
                         'Register',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ))
